@@ -1,0 +1,6 @@
+post_api:
+  host: "jsonplaceholder.typicode.com"
+  port: "443"
+  postCommentsPath: "/posts/{post_id}/comments"
+  postPath: "/posts/{post_id}"
+  postsPath: "/posts"
