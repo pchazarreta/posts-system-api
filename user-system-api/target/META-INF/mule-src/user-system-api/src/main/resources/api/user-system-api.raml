@@ -1,0 +1,32 @@
+#%RAML 1.0
+title: meetings-experience-api
+traits:
+  on-error-trait: !include Traits/on-error-trait.raml
+types:
+  event: !include DataTypes/Event.raml
+  user: !include DataTypes/User.raml
+
+/users:
+  /{user_id}:
+    get:
+      displayName: get user by id
+      is: [on-error-trait]
+      responses:
+        200:
+          body:
+            application/json:
+              type: user
+              examples:
+                output: !include Examples/Response/getUser.raml
+
+    /events:
+      get:
+        displayName: get events of user
+        is: [on-error-trait]
+        responses:
+          200:
+            body:
+              application/json:
+                type: event[]
+                examples:
+                  output: !include Examples/Response/getEvents.raml

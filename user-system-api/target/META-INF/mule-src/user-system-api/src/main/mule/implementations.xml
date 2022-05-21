@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+	<flow name="Copy_of_get:\users\(user_id)\events:user-system-api-config" doc:id="8a1c23c8-0590-452d-857c-616498ec5fca" >
+		<db:select doc:name="Select" doc:id="66d95dc2-a8a1-4dc6-ab6e-43839442ff6c" config-ref="meetings_db">
+			<db:sql ><![CDATA[SELECT events.*, status.name AS statusName, categories.name AS categoriesName, users.id AS userId, users.name, users.lastName, users.avatarUrl, event_images.*
+FROM (events, users_events_roles)
+    INNER JOIN categories ON events.category_id = categories.id
+    INNER JOIN status ON events.status_id = status.id
+    INNER JOIN users ON users_events_roles.user_id = users.id
+    INNER JOIN event_images ON event_images.event_id = events.id
+WHERE users.id = :user_id;]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+'user_id': attributes.uriParams.user_id 
+}]]]></db:input-parameters>
+		</db:select>
+		<ee:transform doc:name="Copy_of_Transform Message" doc:id="2d7d5b93-eacf-4734-ae84-ba25590ea036" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+{
+	id: payload.id,
+	title: payload.title,
+	description: payload.description,
+	lat: payload.lat,
+	lng: payload.lng,
+	startDate: payload.startDate as String,
+	endDate: payload.endDate as String,
+	hidden: payload.hidden,
+	status: {
+		id: payload.status_id,
+		name: payload.statusName
+	},
+	category: {
+		id: payload.category_id,
+		name: payload.categoriesName
+	},
+	user: {
+		id: payload.userId,
+		name: payload.name,
+		lastName: payload.lastName,
+		avatarUrl: payload.avatarUrl
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

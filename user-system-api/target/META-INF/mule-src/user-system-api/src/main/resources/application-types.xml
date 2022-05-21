@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<types:mule xmlns:types="http://www.mulesoft.org/schema/mule/types">
+  <types:catalog>
+    <types:type name="getEvents" format="java">
+      <types:shape format="raml"><![CDATA[#%RAML 1.0 DataType
+
+type: object
+
+
+
+properties:
+  id?: number
+  title: string
+  description: string
+  lat?: number
+  lng?: number
+  startDate: string
+  endDate: string
+  hidden: boolean
+  status:
+   type: object
+   properties:
+     id: number
+     name: string
+  category:
+   type: object
+   properties:
+     id: number
+     name: string
+  user:
+   type: object
+   properties:
+     id?: number
+     name: string
+     lastName: string
+     avatarUrl: string
+
+  images?: 
+    type: array
+    items: 
+      type: object
+
+      properties:
+       id: number
+       alt: string
+       src: string
+       order: number
+       event_id: number
+]]></types:shape>
+    </types:type>
+  </types:catalog>
+  <types:enrichment select="#2d7d5b93-eacf-4734-ae84-ba25590ea036">
+    <types:processor-declaration>
+      <types:output-event>
+        <types:message>
+          <types:payload type="getEvents"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+</types:mule>
